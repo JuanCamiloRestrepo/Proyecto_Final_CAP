@@ -11,7 +11,7 @@ entity Sales : cuid, managed {
     email        : String(40);
     firstName    : String(40);
     lastName     : String(40);
-    country      : Association to sap.common.Countries;
+    country      : Association to Countries;
     createOn     : Date;
     deliveryDate : Date;
     orderStatus  : Association to OrderStatus;
@@ -28,7 +28,7 @@ entity Items : cuid, managed {
     name             : String(40);
     description      : String(40);
     releaseDate      : Date;
-    discontinuedData : Date;
+    discontinuedDate : Date;
     price            : Decimal(12, 2);
     height           : Decimal(15, 3);
     width            : Decimal(13, 3);
@@ -50,9 +50,10 @@ entity OrderStatus : CodeList {
 
 entity UnitsOfMeasure : CodeList {
     key code : String(3);
+        name : String(10);
 };
 
-entity sap.common.Countries : CodeList {
+entity Countries : CodeList {
     key code : String(3); //> ISO 3166-1 alpha-2 codes (or alpha-3)
         name : String(60);
 };
