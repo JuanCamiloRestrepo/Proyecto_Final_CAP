@@ -4,7 +4,7 @@ const cds = require('@sap/cds');
 const { uploadImage, downloadImage, deleteImage } = require('./lib/dropbox'); */
 const { SELECT } = require('@sap/cds/lib/ql/cds-ql');
 
-module.exports = class SalesOrder extends cds.ApplicationService {
+module.exports = class Sales extends cds.ApplicationService {
 
     async init() {
 
@@ -40,11 +40,11 @@ module.exports = class SalesOrder extends cds.ApplicationService {
             req.data.image = null;
         });*/
 
-        this.before('CREATE',Sales, async (req) => {
+        /* this.before('CREATE',Sales, async (req) => {
             console.log(req.data);
-        });
+        }); */
 
-        this.before('CREATE',Items, async (req) => {
+        this.before('NEW',Items.drafts, async (req) => {
             const result     = await SELECT.one.from(Items).columns('max(itemID) as maxItemID');
             req.data.itemID = (result.maxItemID || 0) + 1;
         });

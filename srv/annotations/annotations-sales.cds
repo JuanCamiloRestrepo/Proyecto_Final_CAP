@@ -11,33 +11,33 @@ annotate myservice.Sales with {
     createOn     @title: 'Created On';
     deliveryDate @title: 'Delivery Date';
     orderStatus  @title: 'Order Status';
-    imageUrl     @title: 'Image' @UI.IsImage;
+    imageUrl     @title: 'Image'  @UI.IsImage;
 };
 
 annotate myservice.Sales with {
     salesID     @Common: {
-        Text            : salesID,
-        TextArrangement : #TextOnly,
+        Text           : salesID,
+        TextArrangement: #TextOnly,
     };
-    country @(
-        Common.ValueList: {
-            Label          : 'Country',
-            CollectionPath : 'Countries',
-            Parameters     : [
+    country     @(
+        Common.ValueList      : {
+            Label         : 'Country',
+            CollectionPath: 'Countries',
+            Parameters    : [
                 {
-                    $Type             : 'Common.ValueListParameterInOut',
-                    LocalDataProperty : country_code,
-                    ValueListProperty : 'code'
+                    $Type            : 'Common.ValueListParameterInOut',
+                    LocalDataProperty: country_code,
+                    ValueListProperty: 'code'
                 },
                 {
-                    $Type             : 'Common.ValueListParameterDisplayOnly',
-                    ValueListProperty : 'name'
+                    $Type            : 'Common.ValueListParameterDisplayOnly',
+                    ValueListProperty: 'name'
                 }
             ]
         },
 
-        Common.Text            : country.name,
-        Common.TextArrangement : #TextFirst
+        Common.Text           : country.name,
+        Common.TextArrangement: #TextFirst
     );
     orderStatus @Common: {
         Text           : orderStatus.name,
@@ -83,7 +83,7 @@ annotate myservice.Sales with @(
         },
         {
             $Type: 'UI.DataField',
-            Value: country
+            Value: country_code
         },
         {
             $Type: 'UI.DataField',
@@ -95,7 +95,7 @@ annotate myservice.Sales with @(
         },
         {
             $Type: 'UI.DataField',
-            Value: orderStatus
+            Value: orderStatus_code
         },
         {
             $Type: 'UI.DataField',
@@ -112,10 +112,6 @@ annotate myservice.Sales with @(
             {
                 $Type: 'UI.DataField',
                 Value: lastName
-            },
-            {
-                $Type: 'UI.DataField',
-                Value: email
             }
         ]
     },
@@ -124,7 +120,7 @@ annotate myservice.Sales with @(
         Data : [
             {
                 $Type: 'UI.DataField',
-                Value: country
+                Value: country_code
             },
             {
                 $Type: 'UI.DataField',
@@ -136,7 +132,7 @@ annotate myservice.Sales with @(
             },
             {
                 $Type: 'UI.DataField',
-                Value: orderStatus
+                Value: orderStatus_code
             }
         ]
     },
@@ -148,7 +144,7 @@ annotate myservice.Sales with @(
             Label: ''
         }]
     },
-    UI.HeaderFacets         : [
+   /*  UI.HeaderFacets         : [
         {
             $Type : 'UI.ReferenceFacet',
             Target: '@UI.FieldGroup#Group_H_A'
@@ -161,18 +157,36 @@ annotate myservice.Sales with @(
             $Type : 'UI.ReferenceFacet',
             Target: '@UI.FieldGroup#Picture'
         }
-    ],
-    UI.Facets : [
-    {
-        $Type : 'UI.CollectionFacet',
-        Label : 'Items',
-        Facets : [
-            {
+    ], */
+    UI.Facets               : [
+        {
+            $Type : 'UI.CollectionFacet',
+            ID    : 'HeaderSection',
+            Label : 'Sales Order',
+            Facets: [
+                {
+                    $Type : 'UI.ReferenceFacet',
+                    Target: '@UI.FieldGroup#Group_H_A',
+                    Label : 'Información del objeto'
+                },
+                {
+                    $Type : 'UI.ReferenceFacet',
+                    Target: '@UI.FieldGroup#Group_H_B'
+                },
+                {
+                    $Type : 'UI.ReferenceFacet',
+                    Target: '@UI.FieldGroup#Picture'
+                }
+            ]
+        },
+        {
+            $Type : 'UI.CollectionFacet',
+            Label : 'Items',
+            Facets: [{
                 $Type : 'UI.ReferenceFacet',
                 Target: 'items/@UI.LineItem#Items',
                 Label : 'Items'
-            }
-        ]
-    }
-]
+            }]
+        }
+    ]
 );

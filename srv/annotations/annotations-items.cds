@@ -71,7 +71,7 @@ annotate myservice.Items with @(
         },
         {
             $Type: 'UI.DataField',
-            Value: uom
+            Value: uom_code
         }
     ],
     UI.FieldGroup #Group_D_A: {
@@ -112,7 +112,7 @@ annotate myservice.Items with @(
             },
             {
                 $Type: 'UI.DataField',
-                Value: uom
+                Value: uomde_co
             }
         ]
     },
