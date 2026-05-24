@@ -1,17 +1,17 @@
-using {Sales as myservice} from '../service';
+using {SalesService as myservice} from '../service';
 
-annotate myservice.Sales with @odata.draft.enabled;
+/* annotate myservice.Sales with @odata.draft.enabled; */
 
 annotate myservice.Sales with {
-    salesID      @title: 'Sales ID';
+    salesID      @title: 'Sales ID'      @readonly;
     email        @title: 'Email';
     firstName    @title: 'First Name';
     lastName     @title: 'Last Name';
     country      @title: 'Country';
-    createOn     @title: 'Created On';
+    createOn     @title: 'Created On'    @readonly;
     deliveryDate @title: 'Delivery Date';
-    orderStatus  @title: 'Order Status';
-    imageUrl     @title: 'Image'  @UI.IsImage;
+    orderStatus  @title: 'Order Status'  @readonly;
+    imageUrl     @title: 'Image'         @UI.IsImage;
 };
 
 annotate myservice.Sales with {
@@ -40,7 +40,7 @@ annotate myservice.Sales with {
         Common.TextArrangement: #TextFirst
     );
     orderStatus @Common: {
-        Text           : orderStatus.name,
+        Text           : orderStatus_code,
         TextArrangement: #TextOnly,
     };
 };
@@ -100,6 +100,11 @@ annotate myservice.Sales with @(
         {
             $Type: 'UI.DataField',
             Value: imageUrl
+        },
+        {
+            $Type : 'UI.DataFieldForAction',
+            Action: 'SalesService.rejectOrder',
+            Label : 'Reject Order',
         }
     ],
     UI.FieldGroup #Group_H_A: {
@@ -144,20 +149,20 @@ annotate myservice.Sales with @(
             Label: ''
         }]
     },
-   /*  UI.HeaderFacets         : [
-        {
-            $Type : 'UI.ReferenceFacet',
-            Target: '@UI.FieldGroup#Group_H_A'
-        },
-        {
-            $Type : 'UI.ReferenceFacet',
-            Target: '@UI.FieldGroup#Group_H_B'
-        },
-        {
-            $Type : 'UI.ReferenceFacet',
-            Target: '@UI.FieldGroup#Picture'
-        }
-    ], */
+    /*  UI.HeaderFacets         : [
+         {
+             $Type : 'UI.ReferenceFacet',
+             Target: '@UI.FieldGroup#Group_H_A'
+         },
+         {
+             $Type : 'UI.ReferenceFacet',
+             Target: '@UI.FieldGroup#Group_H_B'
+         },
+         {
+             $Type : 'UI.ReferenceFacet',
+             Target: '@UI.FieldGroup#Picture'
+         }
+     ], */
     UI.Facets               : [
         {
             $Type : 'UI.CollectionFacet',

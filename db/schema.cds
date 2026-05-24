@@ -15,16 +15,16 @@ entity Sales : cuid, managed {
     createOn     : Date;
     deliveryDate : Date;
     orderStatus  : Association to OrderStatus;
-    imageUrl     : LargeBinary  @Core.MediaType: imageType  @Core.ContentDisposition.Filename: fileName;
+    imageUrl     : String       @Core.MediaType: imageType  @Core.ContentDisposition.Filename: fileName;
     imageType    : String       @Core.IsMediaType;
     fileName     : String;
     items        : Composition of many Items
-                       on items.salesID = $self;
+                       on items.sales = $self;
 };
 
 entity Items : cuid, managed {
     itemID           : String(10);
-    salesID          : Association to Sales;
+    sales            : Association to Sales;
     name             : String(40);
     description      : String(40);
     releaseDate      : Date;
@@ -39,12 +39,12 @@ entity Items : cuid, managed {
 
 entity OrderStatus : CodeList {
     key code : String(20) enum {
-            Open = 'Open';
-            PartProc = 'Partially Processed';
+            Open      = 'Open';
+            PartProc  = 'Partially Processed';
             Completed = 'Completed';
-            Rejected = 'Rejected';
-            Blocked = 'Blocked';
-            InProc = 'In Process';
+            Rejected  = 'Rejected';
+            Blocked   = 'Blocked';
+            InProc    = 'In Process';
         }
 };
 

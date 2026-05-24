@@ -1,18 +1,18 @@
-using {Sales as myservice} from '../service';
+using {SalesService as myservice} from '../service';
 
 annotate myservice.Items with {
-    itemID           @title: 'Item ID';
-    salesID          @title: 'Sales ID';
-    name             @title: 'Name';
-    description      @title: 'Description'      @UI.MultiLineText;
-    releaseDate      @title: 'Release Date';
-    discontinuedData @title: 'Discontinued Date';
-    price            @title: 'Price';
-    height           @title: 'Height'           @Measures.Unit: uom;
-    width            @title: 'Width'            @Measures.Unit: uom;
-    depth            @title: 'Depth'            @Measures.Unit: uom;
-    quantity         @title: 'Quantity';
-    uom              @title: 'Unit of Measure'  @Common.IsUnit;
+    itemID            @title: 'Item ID'            @readonly;
+    sales             @title: 'Sales ID';
+    name              @title: 'Name';
+    description       @title: 'Description'        @UI.MultiLineText;
+    releaseDate       @title: 'Release Date'       @readonly;
+    discontinuedDate  @title: 'Discontinued Date'  @readonly;
+    price             @title: 'Price';
+    height            @title: 'Height'             @Measures.Unit: uom_code;
+    width             @title: 'Width'              @Measures.Unit: uom_code;
+    depth             @title: 'Depth'              @Measures.Unit: uom_code;
+    quantity          @title: 'Quantity';
+    uom               @title: 'Unit of Measure'    @Common.IsUnit;
 };
 
 annotate myservice.Items with @(
@@ -28,7 +28,11 @@ annotate myservice.Items with @(
             Value: description
         }
     },
-    UI.LineItem #Items : [
+    UI.LineItem #Items      : [
+        {
+            $Type: 'UI.DataField',
+            Value: itemID
+        },
         {
             $Type: 'UI.DataField',
             Value: name
@@ -43,7 +47,7 @@ annotate myservice.Items with @(
         },
         {
             $Type: 'UI.DataField',
-            Value: discontinuedData
+            Value: discontinuedDate
         },
         {
             $Type             : 'UI.DataField',
@@ -72,6 +76,16 @@ annotate myservice.Items with @(
         {
             $Type: 'UI.DataField',
             Value: uom_code
+        },
+        {
+            $Type: 'UI.DataFieldForAction',
+            Action: 'SalesService.releaseItem',
+            Label: 'Release Item',
+        },
+        {
+            $Type: 'UI.DataFieldForAction',
+            Action: 'SalesService.discontinueItem',
+            Label: 'Discontinue Item',
         }
     ],
     UI.FieldGroup #Group_D_A: {
@@ -83,7 +97,7 @@ annotate myservice.Items with @(
             },
             {
                 $Type: 'UI.DataField',
-                Value: discontinuedData
+                Value: discontinuedDate
             },
             {
                 $Type: 'UI.DataField',
@@ -112,24 +126,24 @@ annotate myservice.Items with @(
             },
             {
                 $Type: 'UI.DataField',
-                Value: uomde_co
+                Value: uom_code
             }
         ]
     },
-    UI.DataPoint #Price: {
-        $Type         : 'UI.DataPointType', 
-        Value         : price, 
-        Visualization : #Number, 
-        Title         : 'Price'
+    UI.DataPoint #Price     : {
+        $Type        : 'UI.DataPointType',
+        Value        : price,
+        Visualization: #Number,
+        Title        : 'Price'
     },
-    UI.HeaderFacets : [
+    UI.HeaderFacets         : [
         {
             $Type : 'UI.ReferenceFacet',
-            Target : '@UI.FieldGroup#Group_D_A'
+            Target: '@UI.FieldGroup#Group_D_A'
         },
         {
             $Type : 'UI.ReferenceFacet',
-            Target : '@UI.FieldGroup#Group_D_B'
+            Target: '@UI.FieldGroup#Group_D_B'
         }
     ]
 

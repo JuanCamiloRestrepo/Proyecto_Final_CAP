@@ -1,30 +1,40 @@
 require('dotenv').config();
 const cds = require('@sap/cds');
-/* const { Readable } = require('node:stream');
-const { uploadImage, downloadImage, deleteImage } = require('./lib/dropbox'); */
-const { SELECT } = require('@sap/cds/lib/ql/cds-ql');
+const registerImageHandlers = require('./handlers/sales-image');
+const { Readable } = require('node:stream');
+const { uploadImage, downloadImage, deleteImage } = require('./lib/dropbox');
+const { UPDATE, SELECT } = require('@sap/cds/lib/ql/cds-ql');
+const { release } = require('node:os');
+const { disconnect } = require('node:cluster');
 
-module.exports = class Sales extends cds.ApplicationService {
+module.exports = class SalesService extends cds.ApplicationService {
 
     async init() {
 
         const { Sales, Items } = this.entities;
 
-        this.before('NEW',Sales.drafts, async (req) => {
+        this.before('CREATE', Sales.drafts, async (req) => {
             req.data.orderStatus_code = 'Open';
-            req.data.createOn    = new Date();
-            const result     = await SELECT.one.from(Sales).columns('max(salesID) as maxSalesID');
+        });
+
+        this.before('NEW', Sales.drafts, async (req) => {
+            if (!req.data.orderStatus_code) {
+                req.data.orderStatus_code = 'Open';
+            }
+            /* req.data.orderStatus_code = 'Open'; */
+            req.data.createOn = new Date();
+            const result = await SELECT.one.from(Sales).columns('max(salesID) as maxSalesID');
             req.data.salesID = (result.maxSalesID || 0) + 1;
         });
 
-        /*this.before(['CREATE', 'UPDATE'], Sales, async (req) => {
+        this.before(['CREATE', 'UPDATE'], Sales, async (req) => {
             const incoming = req.data.imageUrl;
             if (incoming === undefined) return;
 
             const ID = req.data.ID || req.params?.[0]?.ID;
 
             if (incoming === null) {
-                const prev = await SELECT.one.from(Products).columns('fileName').where({ ID });
+                const prev = await SELECT.one.from(Sales).columns('fileName').where({ ID });
                 if (prev?.fileName) await deleteImage(prev.fileName);
                 req.data.fileName = null;
                 req.data.image = null;
@@ -38,22 +48,67 @@ module.exports = class Sales extends cds.ApplicationService {
             req.data.fileName = path;
             req.data.imageType = req.data.imageType || 'image/png';
             req.data.image = null;
-        });*/
+        });
 
         /* this.before('CREATE',Sales, async (req) => {
             console.log(req.data);
         }); */
 
-        this.before('NEW',Items.drafts, async (req) => {
-            const result     = await SELECT.one.from(Items).columns('max(itemID) as maxItemID');
+        this.before('NEW', Items.drafts, async (req) => {
+            const result = await SELECT.one.from(Items).columns('max(itemID) as maxItemID');
             req.data.itemID = (result.maxItemID || 0) + 1;
         });
 
-       /*  this.on('rejectOrder', async (req) => {
-            
-            console.log(req.data);
+        this.before(['CREATE', 'UPDATE'], Sales, async (req) => {
 
-        }); */
+            if (req.data.deliveryDate) {
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const deliveryDate = new Date(req.data.deliveryDate);
+
+                if (deliveryDate <= today) {
+                    req.error(400, 'Delivery date must be greater than current date');
+                }
+            }
+        });
+
+        this.on('rejectOrder', Sales, async (req) => {
+
+            const ID = req.params[0].ID;
+            console.log(ID);
+
+            await UPDATE(Sales)
+                .set({ orderStatus_code: 'Rejected' })
+                .where({ ID });
+
+        });
+
+        this.on('releaseItem', Items, async (req) => {
+
+            const ID = req.params[0].ID;
+            console.log(ID);
+
+            await UPDATE(Items)
+                .set({ releaseDate: new Date() })
+                .where({ ID });
+
+        });
+
+        this.on('discontinueItem', Items, async (req) => {
+
+            const ID = req.params[0].ID;
+            console.log(ID);
+
+            await UPDATE(Items)
+                .set({ discontinuedDate: new Date() })
+                .where({ ID });
+
+        });
+
+        // Integración con Dropbox
+        registerImageHandlers(this);
 
         return super.init();
     }
