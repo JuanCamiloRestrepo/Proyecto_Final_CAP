@@ -77,7 +77,6 @@ module.exports = class SalesService extends cds.ApplicationService {
         this.on('rejectOrder', Sales, async (req) => {
 
             const ID = req.params[0].ID;
-            console.log(ID);
 
             await UPDATE(Sales)
                 .set({ orderStatus_code: 'Rejected' })
@@ -88,22 +87,24 @@ module.exports = class SalesService extends cds.ApplicationService {
         this.on('releaseItem', Items, async (req) => {
 
             const ID = req.params[0].ID;
-            console.log(ID);
 
             await UPDATE(Items)
                 .set({ releaseDate: new Date() })
                 .where({ ID });
+
+            return SELECT.one.from(Items).where({ ID });
 
         });
 
         this.on('discontinueItem', Items, async (req) => {
 
             const ID = req.params[0].ID;
-            console.log(ID);
 
             await UPDATE(Items)
                 .set({ discontinuedDate: new Date() })
                 .where({ ID });
+
+            return SELECT.one.from(Items).where({ ID });
 
         });
 

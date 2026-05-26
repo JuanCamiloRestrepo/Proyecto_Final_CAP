@@ -31,7 +31,7 @@ service SalesService {
                 false,
                 true
             ]}}
-            action releaseItem()     returns Boolean;
+            action releaseItem()     returns Items;
             @Core.OperationAvailable: {$edmJson: {$If: [
                 {$Eq: [
                     {$Path: 'IsActiveEntity'},
@@ -40,7 +40,7 @@ service SalesService {
                 false,
                 true
             ]}}
-            action discontinueItem() returns Boolean;
+            action discontinueItem() returns Items;
         };
 
     //Value Help

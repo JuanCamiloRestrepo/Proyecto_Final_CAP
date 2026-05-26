@@ -4,6 +4,7 @@ using {
     cuid,
     managed,
     sap.common.CodeList,
+    sap.common.Currencies,
 } from '@sap/cds/common';
 
 entity Sales : cuid, managed {
@@ -30,6 +31,7 @@ entity Items : cuid, managed {
     releaseDate      : Date;
     discontinuedDate : Date;
     price            : Decimal(12, 2);
+    currency         : Association to Currencies default 'USD';
     height           : Decimal(15, 3);
     width            : Decimal(13, 3);
     depth            : Decimal(12, 2);

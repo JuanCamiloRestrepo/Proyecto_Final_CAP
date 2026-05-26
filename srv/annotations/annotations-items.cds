@@ -7,10 +7,11 @@ annotate myservice.Items with {
     description       @title: 'Description'        @UI.MultiLineText;
     releaseDate       @title: 'Release Date'       @readonly;
     discontinuedDate  @title: 'Discontinued Date'  @readonly;
-    price             @title: 'Price';
-    height            @title: 'Height'             @Measures.Unit: uom_code;
-    width             @title: 'Width'              @Measures.Unit: uom_code;
-    depth             @title: 'Depth'              @Measures.Unit: uom_code;
+    price             @title: 'Price'              @Measures.ISOCurrency: currency_code;
+    currency          @title: 'Currency'           @Common.IsCurrency;
+    height            @title: 'Height'             @Measures.Unit       : uom_code;
+    width             @title: 'Width'              @Measures.Unit       : uom_code;
+    depth             @title: 'Depth'              @Measures.Unit       : uom_code;
     quantity          @title: 'Quantity';
     uom               @title: 'Unit of Measure'    @Common.IsUnit;
 };
@@ -78,14 +79,14 @@ annotate myservice.Items with @(
             Value: uom_code
         },
         {
-            $Type: 'UI.DataFieldForAction',
+            $Type : 'UI.DataFieldForAction',
             Action: 'SalesService.releaseItem',
-            Label: 'Release Item',
+            Label : 'Release Item',
         },
         {
-            $Type: 'UI.DataFieldForAction',
+            $Type : 'UI.DataFieldForAction',
             Action: 'SalesService.discontinueItem',
-            Label: 'Discontinue Item',
+            Label : 'Discontinue Item',
         }
     ],
     UI.FieldGroup #Group_D_A: {
