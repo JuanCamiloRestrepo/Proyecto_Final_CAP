@@ -86,7 +86,7 @@ module.exports = class SalesService extends cds.ApplicationService {
 
         this.on('releaseItem', Items, async (req) => {
 
-            const ID = req.params[0].ID;
+            const ID = req.params[1].ID;
 
             await UPDATE(Items)
                 .set({ releaseDate: new Date() })
@@ -98,7 +98,7 @@ module.exports = class SalesService extends cds.ApplicationService {
 
         this.on('discontinueItem', Items, async (req) => {
 
-            const ID = req.params[0].ID;
+            const ID = req.params[1].ID;
 
             await UPDATE(Items)
                 .set({ discontinuedDate: new Date() })

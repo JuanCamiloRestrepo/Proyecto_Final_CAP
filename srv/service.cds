@@ -24,19 +24,39 @@ service SalesService {
     entity Items          as projection on entities.Items
         actions {
             @Core.OperationAvailable: {$edmJson: {$If: [
-                {$Eq: [
-                    {$Path: 'IsActiveEntity'},
-                    false
-                ]},
+                { $Or: [
+
+                        {
+                            $Eq: [
+                                { $Path: 'IsActiveEntity' },
+                                false
+                            ]
+                        },
+
+                        { $Path: 'releaseDate' },
+
+                        { $Path: 'discontinuedDate' }
+
+                    ]},
                 false,
                 true
             ]}}
             action releaseItem()     returns Items;
             @Core.OperationAvailable: {$edmJson: {$If: [
-                {$Eq: [
-                    {$Path: 'IsActiveEntity'},
-                    false
-                ]},
+                { $Or: [
+
+                        {
+                            $Eq: [
+                                { $Path: 'IsActiveEntity' },
+                                false
+                            ]
+                        },
+
+                        { $Path: 'releaseDate' },
+
+                        { $Path: 'discontinuedDate' }
+
+                    ]},
                 false,
                 true
             ]}}
